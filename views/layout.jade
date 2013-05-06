@@ -1,10 +1,13 @@
 doctype 5
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    link(rel='stylesheet', href='/stylesheets/bootstrap.css')
-  body
-    block content
-    script(src='/javascripts/jquery-1.9.1.min.js')
-    script(scr='/javascripts/bootstrap.js')
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+		script(src='http://static.ak.fbcdn.net/connect/en_US/core.js')
+	body
+		block content
+		#fb-root
+		script(src='/javascripts/jquery-1.9.1.min.js')
+		script(src='/javascripts/bootstrap.js')
+		script(src='/javascripts/script.js')

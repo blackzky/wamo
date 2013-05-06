@@ -1,6 +1,7 @@
 
 exports.portal = function(req, res){
-	res.send("portal");
+	data = {title: "Portal", login: req.loggedIn};
+	res.render("portal", data);
 };
 
 exports.arena = function(req, res){

@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1= title
+	- if (everyauth.loggedIn)
+		p Welcome #{everyauth.facebook.user.username}
+	- else
+		p Welcome!
+
+	a#fb-login(href='/auth/facebook')
+		| Connect with Facebook
+	br	
+	a#fb-logout(href='/logout')
+		| Logout 
