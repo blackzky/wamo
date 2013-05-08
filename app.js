@@ -7,7 +7,9 @@ var express = require('express')
   , place = require('./routes/place')
   , everyauth = require('everyauth') //everyauth
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , mongoose = require('mongoose');
+mongoose.connect('mongodb://wamo.dev/test');
 
 everyauth.debug = true;
 
@@ -83,6 +85,26 @@ app.get('/users', function(req, res){
 	data = {title: "login", users: usersByFbId};
 	res.render("portal", data);	
 });
+
+
+
+
+var Cat = mongoose.model('Cat', { name: String });
+
+var kitty = new Cat({ name: 'Zildjian' });
+kitty.save(function (err) {
+	console.log("saved");
+  if (err) // ...
+  console.log('meow');
+});
+
+
+Cat.find(function (err, kittens) {
+		console.log(kittens);
+		console.log("---");
+  if (err)
+  console.log(kittens)
+})
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
