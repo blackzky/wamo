@@ -1,24 +1,19 @@
-
-/**
- * Module dependencies.
- */
-
+/* Module dependencies.  */
 var express = require('express')
   , place = require('./routes/place')
   , everyauth = require('everyauth') //everyauth
   , http = require('http')
-  , path = require('path')
-  , mongoose = require('mongoose');
-mongoose.connect('mongodb://wamo.dev/test');
+  , path = require('path');
 
 everyauth.debug = true;
 
 var app = express();
 
-
-//Facebook authentication
 var usersById = {};
 var nextUserId = 0;
+var usersByLogin = {
+  'awesome': addUser({ login: 'awesome', password: '1234qwer'})
+};
 
 function addUser (source, sourceUser) {
   var user;
@@ -33,22 +28,56 @@ function addUser (source, sourceUser) {
   return user;
 }
 
-var usersByFbId = {};
-
 everyauth.everymodule
-  .findUserById( function (id, callback) {
-    callback(null, usersById[id]);
-  });
+.findUserById( function (id, callback) {
+  callback(null, usersById[id]);
+});
 
+
+/* Account module */
 everyauth
-  .facebook
-    .appId("398061643641199")
-    .appSecret("967a1451340453a6458be77e2d90ef13")
-    .findOrCreateUser( function (session, accessToken, accessTokenExtra, fbUserMetadata) {
-      return usersByFbId[fbUserMetadata.id] ||
-        (usersByFbId[fbUserMetadata.id] = addUser('facebook', fbUserMetadata));
+  .password
+    .getLoginPath('/login')
+    .postLoginPath('/login')
+    .loginView('login.jade')
+    .loginLocals( function (req, res, done) {
+      setTimeout( function () {
+        done(null, {
+          title: 'Async login'
+        });
+      }, 200);
     })
-    .redirectPath('/');
+    .authenticate( function (login, password) {
+      var errors = [];
+      if (!login) errors.push('Missing login');
+      if (!password) errors.push('Missing password');
+      if (errors.length) return errors;
+      var user = usersByLogin[login];
+      if (!user) return ['Login failed'];
+      if (user.password !== password) return ['Login failed'];
+      return user;
+    })
+    .getRegisterPath('/register')
+    .postRegisterPath('/register')
+    .registerView('register.jade')
+    .registerLocals( function (req, res, done) {
+      setTimeout( function () {
+        done(null, {
+          title: 'Async Register'
+        });
+      }, 200);
+    })
+    .validateRegistration( function (newUserAttrs, errors) {
+      var login = newUserAttrs.login;
+      if (usersByLogin[login]) errors.push('Login already taken');
+      return errors;
+    })
+    .registerUser( function (newUserAttrs) {
+      var login = newUserAttrs[this.loginKey()];
+      return usersByLogin[login] = addUser(newUserAttrs);
+    })
+    .loginSuccessRedirect('/')
+    .registerSuccessRedirect('/');
 
 
 // all environments
@@ -79,32 +108,6 @@ app.get('/academy', place.academy);
 app.get('/waiting', place.waiting);
 app.get('/battlefield', place.battlefield);
 
-//temp
-app.get('/users', function(req, res){
-	console.log(usersByFbId);
-	data = {title: "login", users: usersByFbId};
-	res.render("portal", data);	
-});
-
-
-
-
-var Cat = mongoose.model('Cat', { name: String });
-
-var kitty = new Cat({ name: 'Zildjian' });
-kitty.save(function (err) {
-	console.log("saved");
-  if (err) // ...
-  console.log('meow');
-});
-
-
-Cat.find(function (err, kittens) {
-		console.log(kittens);
-		console.log("---");
-  if (err)
-  console.log(kittens)
-})
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

@@ -1,6 +1,6 @@
 
 exports.portal = function(req, res){
-	data = {title: "Portal", login: req.loggedIn};
+	data = {title: "Portal", username: req.loggedIn ? req.user.login : null};
 	res.render("portal", data);
 };
 
