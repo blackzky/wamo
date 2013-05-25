@@ -1,12 +1,16 @@
 var PLACE = "portal";
-var CLIENT_CMD = {
+var CLIENT_KEY = {
   SUBMIT : 13,
   FOCUS : 27
 };
 var CMD = {
   "portal" :{
     "login": function(){
-      $("#block").load("login", refocus);
+      if($("#username").val() == ""){
+        $("#block").load("login", refocus);
+      }else{
+        setCmdMsg("You are already logged in");
+      }
     },
     "register": function(){
       $("#block").load("register", refocus);
@@ -27,12 +31,8 @@ var FORM = {
       url: "login",
       data: $("form#login").serialize(),
       success: function(data, textStatus, xhr) {
-        if(data.substring(0, 20).indexOf("DOCTYPE") == -1){
-          $("#block").html(data);
-          refocus();
-        }else{
-          window.location = "/";
-        }
+        $("#block").html(data);
+        refocus();
       }
     });
 
@@ -58,14 +58,20 @@ function refocus(){ $("input").first().focus(); }
 function execCmd(){
   var command = $("#command-line").val().toLowerCase();
   if(typeof(CMD[PLACE.toLowerCase()][command]) === 'undefined'){
-    $("#cmd-response p").text("Invalid Command");
-    $("#cmd-response").show();
+    setCmdMsg("Invalid Command");
   }else{
     CMD[PLACE.toLowerCase()][command]();
-    $("#cmd-response p").text("");
-    $("#cmd-response").hide();
   }
   $("#command-line").val("");
+}
+
+function setCmdMsg(msg){
+  $("#cmd-response p").text(msg);
+  $("#cmd-response").show(0, function(){
+    setTimeout(function(){
+      $("#cmd-response").hide(0);
+    }, 3000);
+  });;
 }
 
 $(document).ready(function() {
@@ -73,9 +79,9 @@ $(document).ready(function() {
   $("#cmd-response").hide();
 
   $(document).keyup(function(e){
-    if(e.keyCode == CLIENT_CMD.FOCUS){
+    if(e.keyCode == CLIENT_KEY.FOCUS){
       $("#command-line").focus();
-    }else if(e.keyCode == CLIENT_CMD.SUBMIT){
+    }else if(e.keyCode == CLIENT_KEY.SUBMIT){
       if(e.target.id != "command-line"){
         FORM[$(e.target).parents().find("form").attr("id").toLowerCase()]();
       }else { execCmd(); }

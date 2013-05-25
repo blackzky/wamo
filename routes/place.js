@@ -5,7 +5,8 @@ exports.portal = function(req, res){
 };
 
 exports.arena = function(req, res){
-	res.send("arena");
+	data = {title: "Arena", username: req.loggedIn ? req.user.login : null};
+	res.render("arena", data);
 };
 
 exports.armory = function(req, res){

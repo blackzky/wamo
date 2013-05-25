@@ -76,8 +76,8 @@ everyauth
       var login = newUserAttrs[this.loginKey()];
       return usersByLogin[login] = addUser(newUserAttrs);
     })
-    .loginSuccessRedirect('/')
-    .registerSuccessRedirect('/');
+    .loginSuccessRedirect('/arena')
+    .registerSuccessRedirect('/arena');
 
 
 // all environments
