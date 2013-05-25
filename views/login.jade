@@ -1,14 +1,19 @@
-h2 Login
-- if ('undefined' !== typeof errors && errors.length)
-  ul#errors
-    - each error in errors
-      li.error= error
-form(action='/login', method='post')
-  #login
-    label(for=everyauth.password.loginFormFieldName) Login
-    input(type='text', name=everyauth.password.loginFormFieldName, value=login)
-  #password
-    label(for=everyauth.password.passwordFormFieldName) Password
-    input(type='password', name=everyauth.password.passwordFormFieldName)
-  #submit
-    input(type='submit') Login
+form#login(action='/login', method='post')
+  fieldset
+    legend Login
+    - if ('undefined' !== typeof errors && errors.length)
+      ul#errors.inline
+        span.label.label-success Errors:
+        - each error in errors
+          li.error
+            span.label.label-important #{error}
+    #login
+      label(for=everyauth.password.loginFormFieldName) Login
+      input(type='text', name=everyauth.password.loginFormFieldName, value=login)
+      span.help-block
+        p.text-info Press 'tab' to input password
+    #password
+      label(for=everyauth.password.passwordFormFieldName) Password
+      input(type='password', name=everyauth.password.passwordFormFieldName)
+      span.help-block
+        p.text-info Press 'enter' to login

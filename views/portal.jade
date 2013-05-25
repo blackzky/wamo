@@ -2,17 +2,5 @@ extends layout
 
 block content
   div#block
-  - if (!everyauth.loggedIn)
-    h2 Not Authenticated
-    #register
-      a(href='/register') Register
-    #password-login
-      a(href='/login', style='border: 0px') Login with Password
-  - else
-    h2 Authenticated
-    p= JSON.stringify(username)
-    - if (everyauth.user)
-      h3 Password User Data
-      p= JSON.stringify(everyauth.password.user)
-    h3
-      a(href='/logout') Logout
+  div#portal
+    | Portal
